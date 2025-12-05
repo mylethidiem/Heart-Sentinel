@@ -180,5 +180,11 @@ AI & Data Science Learner
 * Specializing in Machine Learning, Time Series, and Explainable AI
 * Interested in AI-for-Health and Human-Centered ML
 
-🔗 GitHub: [https://github.com/mylethidiem](https://github.com/mylethidiem) \
-🔗 LinkedIn: [https://www.linkedin.com/in/mylethidiem/](https://www.linkedin.com/in/mylethidiem/)
+**👩‍💻 Author:** [Lê Thị Diễm My](https://github.com/mylethidiem)
+📧 **Email:** lethidiemmy961996@gmail.com
+🔗 **LinkedIn:** [Thi-Diem-My Le](https://www.linkedin.com/in/mylethidiem/)
+
+______________________________________________________________________
+
+> _"Learning, Building, and Growing in Data & AI."_ 🌍
+
