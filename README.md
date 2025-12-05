@@ -172,6 +172,11 @@ jupyter notebook
 
 ---
 
+# 📃 **Relate work**
+- My mini project about [Heart Disease Diagnosis](https://github.com/mylethidiem/data-science-artificial-intelligence-projects/tree/main/Heart-Disease-Diagnosis)
+
+---
+
 # 👩‍⚕️ **About the Author**
 
 **Lê Thị Diễm My**
