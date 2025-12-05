@@ -1,4 +1,7 @@
-# ❤️ **Heart Sentinel**
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mylethidiem/Heart-Sentinel/refs/heads/main/static/heart_sentinel.png" alt="Heart Sentinel Banner" width="100%">
+</p>
+
 
 ### *Early Detection. Smarter Health Decisions.*
 
