@@ -429,7 +429,20 @@ def create_documentation_section():
     - `thal`: Thalassemia (3=normal, 6=fixed defect, 7=reversible defect)
     """)
 
+def create_references_section():
+    """Create the references/sources section."""
+    gr.Markdown("""
+    ## 🔗 **References & Sources**
 
+    ### **Dataset**
+    - **Cleveland Heart Disease Dataset**: [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/45/heart+disease)
+
+    ### **Demo**
+    - **Heart Disease Diagnosis Project**: [AIO2025M03_HEART_DISEASE_PREDICTION](https://huggingface.co/spaces/elizabethmyn/AIO2025M03_HEART_DISEASE_PREDICTION)
+    ---
+    **Disclaimer**: This application is for educational and research purposes only. All clinical decisions should be made by qualified healthcare professionals.
+    """
+)
 def build_interface() -> gr.Blocks:
     """
     Build the complete Gradio interface.
@@ -503,6 +516,9 @@ def build_interface() -> gr.Blocks:
 
         # Documentation
         create_documentation_section()
+
+        # Reference
+        create_references_section()
 
         # Footer
         ui_template.create_footer()

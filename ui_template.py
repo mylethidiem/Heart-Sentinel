@@ -349,7 +349,7 @@ def render_info_card(description: Optional[str] = None,
 
     meta_html = ""
     if items:
-        meta_html = " · ".join([f"<span><strong>{k}</strong>: {v}</span>" for k, v in items])
+        meta_html = "".join([f"<span><strong>{k}</strong>: {v}</span><br>" for k, v in items])
 
     return f"""
     <div style="margin:8px 0 8px 0;">
