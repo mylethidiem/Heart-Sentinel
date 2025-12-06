@@ -1,119 +1,90 @@
-import os, base64
+import os
+import base64
+from pathlib import Path
+from typing import Optional, Dict, List, Tuple
 import gradio as gr
 
-# Theming (can be overridden by the host app)
-PRIMARY_COLOR = "#0F6CBD"   # medical calm blue
-ACCENT_COLOR = "#C4314B"    # medical alert red
-SUCCESS_COLOR = "#2E7D32"   # positive/ok
-BG1 = "#F0F7FF"
-BG2 = "#E8F0FA"
-BG3 = "#DDE7F8"
-FONT_FAMILY = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif"
 
-# App metadata (overridable)
-PROJECT_NAME = "Demo Project"
-YEAR = "2025"
-PROJECT_DESCRIPTION = ""
-META_INFO = []  # list of (label, value)
+class ThemeConfig:
+    """Centralized theme configuration with validation."""
 
-def set_colors(primary: str = None, accent: str = None, bg1: str = None, bg2: str = None, bg3: str = None):
-    """Allow host app to set theme colors dynamically."""
-    global PRIMARY_COLOR, ACCENT_COLOR, BG1, BG2, BG3, custom_css
-    if primary:
-        PRIMARY_COLOR = primary
-    if accent:
-        ACCENT_COLOR = accent
-    if bg1:
-        BG1 = bg1
-    if bg2:
-        BG2 = bg2
-    if bg3:
-        BG3 = bg3
-    # Rebuild CSS with new colors
-    custom_css = _build_custom_css()
-
-def set_font(font_family: str):
-    """Allow host app to set a custom font stack (e.g., 'Inter', system fallbacks)."""
-    global FONT_FAMILY, custom_css
-    if font_family and isinstance(font_family, str):
-        FONT_FAMILY = font_family
-        custom_css = _build_custom_css()
-
-def set_meta(project_name: str = None, year: str = None, description: str = None, meta_items: list = None):
-    """Set project metadata used across the header and info sections."""
-    global PROJECT_NAME, YEAR, PROJECT_DESCRIPTION, META_INFO
-    if project_name is not None:
-        PROJECT_NAME = project_name
-    if year is not None:
-        YEAR = year
-    if description is not None:
-        PROJECT_DESCRIPTION = description
-    if meta_items is not None:
-        META_INFO = meta_items
-
-def configure(project_name: str = None, year: str = None, module: str = None, description: str = None,
-              colors: dict = None, font_family: str = None, meta_items: list = None):
-    """One-call configuration for meta, theme, and font."""
-    if colors:
-        set_colors(
-            primary=colors.get("primary"),
-            accent=colors.get("accent"),
-            bg1=colors.get("bg1"),
-            bg2=colors.get("bg2"),
-            bg3=colors.get("bg3"),
+    def __init__(self):
+        # Default color palette
+        self.primary_color = "#0F6CBD"
+        self.accent_color = "#C4314B"
+        self.success_color = "#2E7D32"
+        self.bg1 = "#F0F7FF"
+        self.bg2 = "#E8F0FA"
+        self.bg3 = "#DDE7F8"
+        self.font_family = (
+            "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', "
+            "Roboto, 'Helvetica Neue', Arial, sans-serif"
         )
-    if font_family:
-        set_font(font_family)
-    set_meta(project_name, year, description, meta_items)
 
+        # Metadata
+        self.project_name = "Heart Project"
+        self.year = "2025"
+        self.about = ""
+        self.description = ""
+        self.meta_items: List[Tuple[str, str]] = []
 
-def image_to_base64(image_path: str):
-    # Construct the absolute path to the image
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    full_image_path = os.path.join(current_dir, image_path)
-    with open(full_image_path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
+        # Cache for CSS
+        self._css_cache: Optional[str] = None
 
-def create_header():
-    with gr.Row():
-        with gr.Column(scale=2):
-            logo_base64 = image_to_base64("static/heart_sentinel.png")
-            gr.HTML(
-                f"""<img src="data:image/png;base64,{logo_base64}"
-                        alt="Logo"
-                        style="height:120px;width:auto;margin:0 auto;margin-bottom:16px; display:block;">"""
-            )
-        with gr.Column(scale=2):
-            gr.HTML(f"""
-<div style="display:flex;justify-content:flex-start;align-items:center;gap:30px;">
-    <div>
-        <h1 style="margin-bottom:0; color: {PRIMARY_COLOR}; font-size: 2.5em; font-weight: bold;"> {PROJECT_NAME} </h1>
-        <h3 style="color: #888; font-style: italic"> </h3>
-    </div>
-</div>
-""")
+    def update_colors(self, **kwargs) -> None:
+        """Update color scheme with validation."""
+        valid_keys = {'primary', 'accent', 'success', 'bg1', 'bg2', 'bg3'}
+        for key, value in kwargs.items():
+            if key not in valid_keys or value is None:
+                continue
+            if not self._is_valid_color(value):
+                raise ValueError(f"Invalid color format for {key}: {value}")
+            setattr(self, f"{key}_color" if not key.startswith('bg') else key, value)
+        self._invalidate_cache()
 
-def create_footer():
-    logo_base64_heart_sentinel = image_to_base64("static/heart_sentinel.png")
-    footer_html = """
-<style>
-  .sticky-footer{position:fixed;bottom:0px;left:0;width:100%;background:#E8F5E8;
-                 padding:10px;box-shadow:0 -2px 10px rgba(0,0,0,0.1);z-index:1000;}
-  .content-wrap{padding-bottom:60px;}
-</style>""" + f"""
-<div class="sticky-footer">
-  <div style="text-align:center;font-size:18px; color: #888">
-    Created by
-    <a href="my-personal-web" target="_blank" style="color:#465C88;text-decoration:none;font-weight:bold; display:inline-flex; align-items:center;"> Heart Sentinel
-    <img src="data:image/png;base64,{logo_base64_heart_sentinel}" alt="Logo" style="height:20px; width:auto;">
-    </a> from <a href="https://aivietnam.edu.vn/" target="_blank" style="color:#355724;text-decoration:none;font-weight:bold">AI VIET NAM</a>
-  </div>
-</div>
-"""
-    return gr.HTML(footer_html)
+    def update_font(self, font_family: str) -> None:
+        """Update font family."""
+        if font_family and isinstance(font_family, str):
+            self.font_family = font_family
+            self._invalidate_cache()
 
-def _build_custom_css() -> str:
-    return f"""
+    def update_meta(self, project_name: Optional[str] = None,
+                    year: Optional[str] = None,
+                    about: Optional[str] = None,
+                    description: Optional[str] = None,
+                    meta_items: Optional[List[Tuple[str, str]]] = None) -> None:
+        """Update metadata."""
+        if project_name is not None:
+            self.project_name = project_name
+        if year is not None:
+            self.year = year
+        if about is not None:
+            self.about = about
+        if description is not None:
+            self.description = description
+        if meta_items is not None:
+            self.meta_items = meta_items
+
+    @staticmethod
+    def _is_valid_color(color: str) -> bool:
+        """Validate hex color format."""
+        return isinstance(color, str) and (
+            color.startswith('#') and len(color) in (4, 7, 9)
+        )
+
+    def _invalidate_cache(self) -> None:
+        """Clear CSS cache when theme changes."""
+        self._css_cache = None
+
+    def get_css(self) -> str:
+        """Get or generate CSS with caching."""
+        if self._css_cache is None:
+            self._css_cache = self._build_css()
+        return self._css_cache
+
+    def _build_css(self) -> str:
+        """Build the complete CSS string."""
+        return f"""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .gradio-container {{
@@ -121,7 +92,7 @@ def _build_custom_css() -> str:
     width: 100vw !important;
     margin: 0 !important;
     padding: 0px !important;
-    background: linear-gradient(135deg, {BG1} 0%, {BG2} 50%, {BG3} 100%);
+    background: linear-gradient(135deg, {self.bg1} 0%, {self.bg2} 50%, {self.bg3} 100%);
     background-size: 600% 600%;
     animation: gradientBG 7s ease infinite;
 }}
@@ -130,7 +101,7 @@ def _build_custom_css() -> str:
 body, .gradio-container, .gr-block, .gr-markdown, .gr-button, .gr-input,
 .gr-dropdown, .gr-number, .gr-plot, .gr-dataframe, .gr-accordion, .gr-form,
 .gr-textbox, .gr-html, table, th, td, label, h1, h2, h3, h4, h5, h6, p, span, div {{
-    font-family: {FONT_FAMILY} !important;
+    font-family: {self.font_family} !important;
 }}
 
 @keyframes gradientBG {{
@@ -202,46 +173,248 @@ body, .gradio-container, .gr-block, .gr-markdown, .gr-button, .gr-input,
     bottom: 0px;
     left: 0;
     width: 100%;
-    background: {BG1};
+    background: {self.bg1};
     padding: 6px !important;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     z-index: 1000;
 }}
 """
 
-# Initialize CSS using defaults
-custom_css = _build_custom_css()
 
-def render_info_card(description: str = None, meta_items: list = None, icon: str = "🧠", title: str = "About this demo") -> str:
-    desc = description if description is not None else PROJECT_DESCRIPTION
-    items = meta_items if meta_items is not None else META_INFO
-    meta_html = " · ".join([f"<span><strong>{k}</strong>: {v}</span>" for k, v in items]) if items else ""
+# Global theme instance
+_theme = ThemeConfig()
+
+
+def configure(project_name: Optional[str] = None,
+              year: Optional[str] = None,
+              about: Optional[str] = None,
+              description: Optional[str] = None,
+              colors: Optional[Dict[str, str]] = None,
+              font_family: Optional[str] = None,
+              meta_items: Optional[List[Tuple[str, str]]] = None) -> None:
+    """
+    One-call configuration for the entire theme.
+
+    Args:
+        project_name: Name of the project
+        year: Project year
+        about: About project
+        description: Project description
+        colors: Dict with keys: primary, accent, success, bg1, bg2, bg3
+        font_family: CSS font family string
+        meta_items: List of (label, value) tuples for metadata
+    """
+    if colors:
+        _theme.update_colors(**colors)
+    if font_family:
+        _theme.update_font(font_family)
+    _theme.update_meta(project_name, year, about, description, meta_items)
+
+
+def get_custom_css() -> str:
+    """Get the current custom CSS."""
+    return _theme.get_css()
+
+
+def _image_to_base64(image_path: str) -> str:
+    """
+    Convert image to base64 string with better error handling.
+
+    Args:
+        image_path: Relative path to image file
+
+    Returns:
+        Base64 encoded string
+
+    Raises:
+        FileNotFoundError: If image file doesn't exist
+    """
+    current_dir = Path(__file__).parent
+    full_path = current_dir / image_path
+
+    if not full_path.exists():
+        raise FileNotFoundError(f"Image not found: {full_path}")
+
+    with open(full_path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
+
+
+def create_header(logo_path: str = "static/heart_sentinel.png") -> None:
+    """
+    Create a header with logo and project name.
+
+    Args:
+        logo_path: Path to logo image
+    """
+    with gr.Row():
+        with gr.Column(scale=2):
+            try:
+                logo_base64 = _image_to_base64(logo_path)
+                gr.HTML(
+                    f"""<img src="data:image/png;base64,{logo_base64}"
+                            alt="Logo"
+                            style="height:120px;width:auto;margin:0 auto;margin-bottom:16px;display:block;">"""
+                )
+            except FileNotFoundError:
+                gr.HTML("<div style='text-align:center;color:#999;'>Logo not found</div>")
+
+        with gr.Column(scale=2):
+            gr.HTML(f"""
+<div style="display:flex;justify-content:flex-start;align-items:center;gap:30px;">
+    <div>
+        <h1 style="margin-bottom:0;color:{_theme.primary_color};font-size:2.5em;font-weight:bold;">
+            {_theme.project_name}
+        </h1>
+        <p style="margin-top:4px;font-size:1.1em;color:#555;">{_theme.about}</p>
+    </div>
+</div>
+""")
+
+
+def create_footer(logo_path: str = "static/heart_sentinel.png",
+                  creator_name: str = "Thi-Diem-My Le",
+                  creator_link: str = "https://beacons.ai/elizabethmyn",
+                  org_name: str = "AI VIET NAM",
+                  org_link: str = "https://aivietnam.edu.vn/") -> gr.HTML:
+    """
+    Create a sticky footer with creator information.
+
+    Args:
+        logo_path: Path to logo image
+        creator_name: Name of creator
+        creator_link: Link to creator profile
+        org_name: Organization name
+        org_link: Link to organization
+
+    Returns:
+        Gradio HTML component
+    """
+    try:
+        logo_base64 = _image_to_base64(logo_path)
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" alt="Logo" style="height:0px;width:auto;">'
+    except FileNotFoundError:
+        logo_html = ""
+
+    footer_html = f"""
+<style>
+  .sticky-footer{{
+    position:fixed;
+    bottom:0px;
+    left:0;
+    width:100%;
+    background:#E8F5E8;
+    padding:10px;
+    box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+    z-index:1000;
+  }}
+  .content-wrap{{padding-bottom:60px;}}
+</style>
+<div class="sticky-footer">
+  <div style="text-align:center;font-size:18px;color:#888">
+    Created by
+    <a href="{creator_link}" target="_blank"
+       style="color:#465C88;text-decoration:none;font-weight:bold;display:inline-flex;align-items:center;">
+      {creator_name}
+      {logo_html}
+    </a>
+    from
+    <a href="{org_link}" target="_blank"
+       style="color:#355724;text-decoration:none;font-weight:bold;">
+      {org_name}
+    </a>
+  </div>
+</div>
+"""
+    return gr.HTML(footer_html)
+
+
+def render_info_card(description: Optional[str] = None,
+                     meta_items: Optional[List[Tuple[str, str]]] = None,
+                     icon: str = "🧠",
+                     title: str = "About this demo") -> str:
+    """
+    Render an informational card.
+
+    Args:
+        description: Card description text
+        meta_items: List of (label, value) tuples
+        icon: Emoji or icon for the card
+        title: Card title
+
+    Returns:
+        HTML string for the card
+    """
+    desc = description if description is not None else _theme.description
+    items = meta_items if meta_items is not None else _theme.meta_items
+
+    meta_html = ""
+    if items:
+        meta_html = " · ".join([f"<span><strong>{k}</strong>: {v}</span>" for k, v in items])
+
     return f"""
-    <div style="margin: 8px 0 8px 0;">
-      <div style="background:#F5F9FF;border-left:6px solid {PRIMARY_COLOR};padding:14px 16px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+    <div style="margin:8px 0 8px 0;">
+      <div style="background:#F5F9FF;border-left:6px solid {_theme.primary_color};
+                  padding:14px 16px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
         <div style="display:flex;gap:14px;align-items:flex-start;">
           <div style="font-size:22px;">{icon}</div>
           <div>
-            <div style="font-weight:700;color:{PRIMARY_COLOR};margin-bottom:4px;">{title}</div>
+            <div style="font-weight:700;color:{_theme.primary_color};margin-bottom:4px;">{title}</div>
             <div style="color:#000;font-size:14px;line-height:1.5;">{desc}</div>
-            <div style="margin-top:8px;color:#000;font-size:13px;">{meta_html}</div>
+            {f'<div style="margin-top:8px;color:#000;font-size:13px;">{meta_html}</div>' if meta_html else ''}
           </div>
         </div>
       </div>
     </div>
     """
 
-def render_disclaimer(text: str, icon: str = "⚠️", title: str = "Educational Use Only") -> str:
+
+def render_disclaimer(text: str,
+                      icon: str = "⚠️",
+                      title: str = "Educational Use Only") -> str:
+    """
+    Render a disclaimer/warning card.
+
+    Args:
+        text: Warning text
+        icon: Warning icon/emoji
+        title: Warning title
+
+    Returns:
+        HTML string for the disclaimer
+    """
     return f"""
-    <div style=\"margin: 8px 0 6px 0;\">
-      <div style=\"background:#FFF4F4;border-left:6px solid {ACCENT_COLOR};padding:12px 16px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);\">
-        <div style=\"display:flex;gap:10px;align-items:flex-start;color:#000;\">
-          <span style=\"font-size:20px\">{icon}</span>
+    <div style="margin:8px 0 6px 0;">
+      <div style="background:#FFF4F4;border-left:6px solid {_theme.accent_color};
+                  padding:12px 16px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <div style="display:flex;gap:10px;align-items:flex-start;color:#000;">
+          <span style="font-size:20px">{icon}</span>
           <div>
-            <div style=\"font-weight:700; margin-bottom:4px;\">{title}</div>
-            <div style=\"font-size:14px; line-height:1.4;\">{text}</div>
+            <div style="font-weight:700;margin-bottom:4px;">{title}</div>
+            <div style="font-size:14px;line-height:1.4;">{text}</div>
           </div>
         </div>
       </div>
     </div>
     """
+
+
+# Backward compatibility - expose old function names
+def set_colors(**kwargs):
+    """Legacy function - use configure() instead."""
+    _theme.update_colors(**kwargs)
+
+
+def set_font(font_family: str):
+    """Legacy function - use configure() instead."""
+    _theme.update_font(font_family)
+
+
+def set_meta(**kwargs):
+    """Legacy function - use configure() instead."""
+    _theme.update_meta(**kwargs)
+
+
+# Expose custom_css as a property for backward compatibility
+@property
+def custom_css():
+    return _theme.get_css()
