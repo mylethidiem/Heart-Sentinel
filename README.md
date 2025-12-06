@@ -10,6 +10,9 @@ The system integrates **machine learning**, **risk prediction**, **chatbot healt
 
 ---
 
+### 🎬 Demo
+Demo link: https://huggingface.co/spaces/elizabethmyn/Heart-Sentinel
+
 # 📌 **Key Features**
 
 ### 🔎 **1. Heart Disease Diagnosis**
