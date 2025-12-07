@@ -2,9 +2,6 @@
 This repository contains a complete end-to-end pipeline for **heart disease prediction** using classical Machine Learning algorithms.
 The project explores multiple models, performs feature engineering, evaluates performance, and includes a **Streamlit demo** for basic deployment.
 
-🔗 **Hugging Face Demo:**
-[https://huggingface.co/spaces/elizabethmyn/AIO2025M03_HEART_DISEASE_PREDICTION](https://huggingface.co/spaces/elizabethmyn/AIO2025M03_HEART_DISEASE_PREDICTION)
-
 📝 **Notes (Notion):**
 [https://www.notion.so/Heart-Disease-Diagnosis-2a40730a967380689b87eeb26a447b72](https://www.notion.so/Heart-Disease-Diagnosis-2a40730a967380689b87eeb26a447b72)
 
