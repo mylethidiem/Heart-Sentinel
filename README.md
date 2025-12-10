@@ -179,7 +179,9 @@ jupyter notebook
 
 # 📃 **Relate work**
 - My mini project about [Heart Disease Diagnosis](https://github.com/mylethidiem/data-science-artificial-intelligence-projects/tree/main/Heart-Disease-Diagnosis)
-
+- [My HuggingFace Space for Heart Sentinel](https://huggingface.co/spaces/elizabethmyn/Intelligent-Retail-Decision-Making-System)
+- [My Note for this project](https://www.notion.so/Heart-Disease-Diagnosis-2a40730a967380689b87eeb26a447b72)
+  
 ---
 
 # 👩‍⚕️ **About the Author**
