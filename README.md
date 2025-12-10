@@ -9,9 +9,8 @@ Heart Sentinel is an intelligent health-monitoring and early-warning system desi
 The system integrates **machine learning**, **risk prediction**, **chatbot health coaching**, and is designed to **extend into real-time wearable data** for continuous health monitoring.
 
 ---
-
 ### 🎬 Demo
-Demo link: https://huggingface.co/spaces/elizabethmyn/Heart-Sentinel
+- [You can run the Hugging Face demo here](https://elizabethmyn-heart-sentinel.hf.space/)
 
 # 📌 **Key Features**
 
