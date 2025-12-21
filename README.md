@@ -19,11 +19,11 @@ The system integrates **machine learning**, **risk prediction**, **chatbot healt
 * Predicts the likelihood of heart-related conditions using clinical and demographic features.
 * Supports explainability (XAI) to show *why* the model makes a prediction.
 
-### 🩸 **2. Cholesterol Level Prediction**
+### 🩸 **2. Cholesterol Level Prediction (Future Extension)**
 
 * Regression model forecasting cholesterol based on health metrics and lifestyle indicators.
 
-### ⚠️ **3. Stroke Risk Assessment**
+### ⚠️ **3. Stroke Risk Assessment  (Future Extension)**
 
 * Identifies high-risk patterns early using medical datasets and statistical indicators.
 * Designed to alert users before symptoms escalate.
@@ -31,9 +31,9 @@ The system integrates **machine learning**, **risk prediction**, **chatbot healt
 ### 🔔 **4. Smart Health Alerts**
 
 * Instant warnings for abnormal metrics (e.g., elevated heart rate, risk spikes).
-* Ideal for future IoT sensor and wearable integration.
+* Ideal for future IoT sensor and wearable integration (Future Extension).
 
-### 🤖 **5. Health Advisory Chatbot**
+### 🤖 **5. Health Advisory Chatbot (Future Extension)**
 
 * Provides recommendations on:
 
@@ -192,9 +192,10 @@ AI & Data Science Learner
 * Specializing in Machine Learning, Time Series, and Explainable AI
 * Interested in AI-for-Health and Human-Centered ML
 
-**👩‍💻 Author:** [Lê Thị Diễm My](https://github.com/mylethidiem)
-📧 **Email:** lethidiemmy961996@gmail.com
-🔗 **LinkedIn:** [Thi-Diem-My Le](https://www.linkedin.com/in/mylethidiem/)
+Contact info:
+- 👩‍💻 **Author:** [Lê Thị Diễm My](https://github.com/mylethidiem)
+- 📧 **Email:** lethidiemmy961996@gmail.com
+- 🔗 **LinkedIn:** [Thi-Diem-My Le](https://www.linkedin.com/in/mylethidiem/)
 
 ______________________________________________________________________
 
